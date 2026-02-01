@@ -21,7 +21,7 @@
     >
       <template #renderItem="{ item }">
         <div class="post-card-container">
-          <a-card hoverable class="post-card">
+          <a-card hoverable class="post-card" @click="router.push(`/post/detail/${item.id}`)">
             <div class="post-card-body">
               <div class="post-content-left">
                 <div class="post-title">{{ item.title }}</div>
@@ -78,6 +78,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   LikeOutlined,
   LikeTwoTone,
@@ -94,6 +95,7 @@ import { formatDate, getTagColor } from '@/utils'
 const postList = ref<API.PostVO[]>([])
 const loading = ref(false)
 const total = ref(0)
+const router = useRouter()
 
 const searchParams = reactive<API.PostQueryRequest>({
   current: 1,

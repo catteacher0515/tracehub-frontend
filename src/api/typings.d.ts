@@ -787,6 +787,12 @@ declare namespace API {
     userId?: number
   }
 
+  type BaseResponsePostVO_ = {
+    code?: number
+    data?: PostVO
+    message?: string
+  }
+
   type BaseResponsePagePostVO_ = {
     code?: number
     data?: PagePostVO_

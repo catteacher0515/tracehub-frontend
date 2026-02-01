@@ -19,7 +19,8 @@ import UserExchangeVipPage from '@/pages/UserExchangeVipPage.vue'
 import UserDetailPage from '@/pages/user/UserDetailPage.vue'
 // 帖子相关
 import AddPostPage from '@/pages/AddPostPage.vue'
-import PostSquarePage from '@/pages/PostSquarePage.vue' // 新增：广场页面导入
+import PostSquarePage from '@/pages/PostSquarePage.vue'
+import PostDetailPage from '@/pages/PostDetailPage.vue' // 新增：帖子详情页导入
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -114,9 +115,15 @@ const router = createRouter({
       component: AddPostPage,
     },
     {
-      path: '/post/square', // 新增：广场路由
+      path: '/post/square',
       name: '广场',
       component: PostSquarePage,
+    },
+    {
+      path: '/post/detail/:id', // 新增：帖子详情路由
+      name: '帖子详情',
+      component: PostDetailPage,
+      props: true,
     },
     // 用户个人中心
     {

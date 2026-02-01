@@ -17,6 +17,20 @@ export async function addPostUsingPost(
   })
 }
 
+/** getPostVOById GET /api/post/get/vo */
+export async function getPostVOByIdUsingGet(
+  params: { id?: number | string },
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePostVO_>('/api/post/get/vo', {
+    method: 'GET',
+    params: {
+      ...params,
+    },
+    ...(options || {}),
+  })
+}
+
 /** listPostVOByPage POST /api/post/list/page/vo */
 export async function listPostVOByPageUsingPost(
   body: API.PostQueryRequest,

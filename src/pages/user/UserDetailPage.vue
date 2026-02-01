@@ -15,7 +15,7 @@
           <a-list :data-source="myPostList" :loading="loading" item-layout="vertical">
             <template #renderItem="{ item }">
               <div class="post-card-container">
-                <a-card hoverable class="post-card">
+                <a-card hoverable class="post-card" @click="router.push(`/post/detail/${item.id}`)">
                   <div class="post-card-body">
                     <div class="post-content-left">
                       <div class="post-title">{{ item.title }}</div>
@@ -70,7 +70,7 @@
           <a-list :data-source="favourPostList" :loading="loading" item-layout="vertical">
             <template #renderItem="{ item }">
               <div class="post-card-container">
-                <a-card hoverable class="post-card">
+                <a-card hoverable class="post-card" @click="router.push(`/post/detail/${item.id}`)">
                   <div class="post-card-body">
                     <div class="post-content-left">
                       <div class="post-title">{{ item.title }}</div>
@@ -121,7 +121,7 @@
           <a-list :data-source="thumbPostList" :loading="loading" item-layout="vertical">
             <template #renderItem="{ item }">
               <div class="post-card-container">
-                <a-card hoverable class="post-card">
+                <a-card hoverable class="post-card" @click="router.push(`/post/detail/${item.id}`)">
                   <div class="post-card-body">
                     <div class="post-content-left">
                       <div class="post-title">{{ item.title }}</div>
