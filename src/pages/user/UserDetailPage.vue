@@ -48,6 +48,12 @@
                           >
                             <span class="action-icon delete-icon">删除</span>
                           </a-popconfirm>
+                          <span class="action-icon">
+                            <LikeOutlined /> {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
+                          </span>
+                          <span class="action-icon">
+                            <StarOutlined /> {{ item.favourNum < 0 ? 0 : item.favourNum }}
+                          </span>
                         </a-space>
                       </div>
                     </div>
@@ -93,6 +99,12 @@
                           <span>
                             {{ formatDate(item.createTime) }}
                           </span>
+                          <span class="action-icon">
+                            <LikeOutlined /> {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
+                          </span>
+                          <span class="action-icon">
+                            <StarOutlined /> {{ item.favourNum < 0 ? 0 : item.favourNum }}
+                          </span>
                         </a-space>
                       </div>
                     </div>
@@ -137,6 +149,12 @@
                           </span>
                           <span>
                             {{ formatDate(item.createTime) }}
+                          </span>
+                          <span class="action-icon">
+                            <LikeOutlined /> {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
+                          </span>
+                          <span class="action-icon">
+                            <StarOutlined /> {{ item.favourNum < 0 ? 0 : item.favourNum }}
                           </span>
                         </a-space>
                       </div>

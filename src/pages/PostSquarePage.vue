@@ -55,12 +55,12 @@
                     <span @click.stop="doThumb(item)" class="action-icon">
                       <LikeTwoTone v-if="item.hasThumb" two-tone-color="#eb2f96" />
                       <LikeOutlined v-else />
-                      {{ item.thumbNum }}
+                      {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
                     </span>
                     <span @click.stop="doFavour(item)" class="action-icon">
                       <StarTwoTone v-if="item.hasFavour" two-tone-color="#eb2f96" />
                       <StarOutlined v-else />
-                      {{ item.favourNum }}
+                      {{ item.favourNum < 0 ? 0 : item.favourNum }}
                     </span>
                   </a-space>
                 </div>
