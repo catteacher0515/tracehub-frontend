@@ -39,6 +39,11 @@ const fixedMenuItems = [
     icon: () => h(EditOutlined),
   },
   {
+    key: '/post/square',
+    label: '广场',
+    icon: () => h(TeamOutlined),
+  },
+  {
     key: '/my_space',
     label: '我的空间',
     icon: () => h(UserOutlined),

@@ -15,10 +15,11 @@ import SearchPicturePage from '@/pages/SearchPicturePage.vue'
 import SpaceAnalyzePage from '@/pages/SpaceAnalyzePage.vue'
 import SpaceUserManagePage from '@/pages/admin/SpaceUserManagePage.vue'
 import UserExchangeVipPage from '@/pages/UserExchangeVipPage.vue'
-// 预留个人详情页组件导入
+// 个人相关
 import UserDetailPage from '@/pages/user/UserDetailPage.vue'
-// 新增：发帖页面组件导入
+// 帖子相关
 import AddPostPage from '@/pages/AddPostPage.vue'
+import PostSquarePage from '@/pages/PostSquarePage.vue' // 新增：广场页面导入
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -106,7 +107,18 @@ const router = createRouter({
       name: '用户兑换会员',
       component: UserExchangeVipPage,
     },
-    // 新增：个人详情页/个人中心 (已修复语法错误)
+    // 帖子模块路由
+    {
+      path: '/add_post',
+      name: '发布帖子',
+      component: AddPostPage,
+    },
+    {
+      path: '/post/square', // 新增：广场路由
+      name: '广场',
+      component: PostSquarePage,
+    },
+    // 用户个人中心
     {
       path: '/user/my',
       name: '个人中心',
@@ -117,12 +129,6 @@ const router = createRouter({
       name: '用户详情',
       component: UserDetailPage,
       props: true,
-    },
-    // 新增：发布帖子路由 (已去重)
-    {
-      path: '/add_post',
-      name: '发布帖子',
-      component: AddPostPage,
     },
     {
       path: '/about',
