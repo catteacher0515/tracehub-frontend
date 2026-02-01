@@ -193,7 +193,7 @@ declare namespace API {
   }
 
   type DeleteRequest = {
-    id?: number
+    id?: number | string
   }
 
   type GetOutPaintingTaskResponse = {

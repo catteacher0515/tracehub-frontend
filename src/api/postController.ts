@@ -16,3 +16,33 @@ export async function addPostUsingPost(
     ...(options || {}),
   })
 }
+
+/** listMyPostVOByPage POST /api/post/my/list/page/vo */
+export async function listMyPostVOByPage(
+  body: API.PostQueryRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponsePagePostVO_>('/api/post/my/list/page/vo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** deletePost POST /api/post/delete */
+export async function deletePost(
+  body: API.DeleteRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>('/api/post/delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}

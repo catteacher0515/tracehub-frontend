@@ -11,6 +11,39 @@
     </a-card>
     <a-card style="margin-top: 16px">
       <a-tabs v-model:activeKey="activeKey" @change="onTabChange">
+        <a-tab-pane key="post" tab="我的帖子">
+          <a-list :data-source="myPostList" :loading="loading" item-layout="horizontal">
+            <template #renderItem="{ item }">
+              <a-list-item>
+                <template #actions>
+                  <a-popconfirm
+                    title="确认删除该帖子吗？"
+                    ok-text="确认"
+                    cancel-text="取消"
+                    @confirm="doDelete(item)"
+                  >
+                    <a-button type="text" danger>删除</a-button>
+                  </a-popconfirm>
+                </template>
+                <a-list-item-meta :title="item.title">
+                  <template #description>
+                    <div style="margin-bottom: 8px">
+                      {{ item.content?.length > 50 ? item.content.substring(0, 50) + '...' : item.content }}
+                    </div>
+                    <a-space>
+                      <a-tag v-for="tag in parseTags(item.tags || item.tagList)" :key="tag">
+                        {{ tag }}
+                      </a-tag>
+                    </a-space>
+                  </template>
+                </a-list-item-meta>
+                <div v-if="item.postImg" style="margin-left: 16px">
+                  <a-image :src="item.postImg" :width="100" style="border-radius: 4px" />
+                </div>
+              </a-list-item>
+            </template>
+          </a-list>
+        </a-tab-pane>
         <a-tab-pane key="favour" tab="我的收藏">
           <a-list :data-source="favourPostList" :loading="loading" item-layout="horizontal">
             <template #renderItem="{ item }">
@@ -58,13 +91,15 @@ import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
 import { listMyFavourPostByPage } from '@/api/postFavourController'
 import { listMyThumbPostByPage } from '@/api/postThumbController'
+import { listMyPostVOByPage, deletePost } from '@/api/postController'
 import { message } from 'ant-design-vue'
 
 const loginUserStore = useLoginUserStore()
 const loginUser = computed(() => loginUserStore.loginUser)
 const router = useRouter()
 
-const activeKey = ref('favour')
+const activeKey = ref('post')
+const myPostList = ref<API.PostVO[]>([])
 const favourPostList = ref<API.PostVO[]>([])
 const thumbPostList = ref<API.PostVO[]>([])
 const loading = ref(false)
@@ -72,7 +107,19 @@ const loading = ref(false)
 const loadData = async () => {
   loading.value = true
   try {
-    if (activeKey.value === 'favour') {
+    if (activeKey.value === 'post') {
+      const res = await listMyPostVOByPage({
+        current: 1,
+        pageSize: 10,
+        sortField: 'createTime',
+        sortOrder: 'descend',
+      })
+      if (res.data.code === 0) {
+        myPostList.value = res.data.data.records || []
+      } else {
+        message.error('加载我的帖子失败：' + res.data.message)
+      }
+    } else if (activeKey.value === 'favour') {
       const res = await listMyFavourPostByPage({
         current: 1,
         pageSize: 10,
@@ -101,6 +148,19 @@ const loadData = async () => {
     message.error('加载失败：' + e.message)
   } finally {
     loading.value = false
+  }
+}
+
+const doDelete = async (item: API.PostVO) => {
+  if (!item.id) return
+  const res = await deletePost({
+    id: item.id,
+  })
+  if (res.data.code === 0) {
+    message.success('删除成功')
+    loadData()
+  } else {
+    message.error('删除失败：' + res.data.message)
   }
 }
 
