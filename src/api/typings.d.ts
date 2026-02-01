@@ -83,9 +83,10 @@ declare namespace API {
     message?: string
   }
 
+// 修正：Long 类型的数据在前端建议统一用 string 接收，防止雪花 ID 精度丢失
   type BaseResponseLong_ = {
     code?: number
-    data?: number
+    data?: string  // 修改为 string
     message?: string
   }
 
@@ -720,5 +721,83 @@ declare namespace API {
 
   type VipExchangeRequest = {
     vipCode?: string
+  }
+
+  type PostAddRequest = {
+    content?: string
+    postImg?: string
+    tags?: string[]
+    title?: string
+  }
+
+  type PostFavourAddRequest = {
+    postId?: number
+  }
+
+  type PostFavourQueryRequest = {
+    current?: number
+    pageSize?: number
+    postQueryRequest?: PostQueryRequest
+    sortField?: string
+    sortOrder?: string
+    userId?: number
+  }
+
+  type PostQueryRequest = {
+    content?: string
+    current?: number
+    favourUserId?: number
+    id?: number
+    notId?: number
+    pageSize?: number
+    searchText?: string
+    sortField?: string
+    sortOrder?: string
+    tags?: string[]
+    title?: string
+    userId?: number
+  }
+
+  type PostThumbAddRequest = {
+    postId?: number
+  }
+
+  type PostThumbQueryRequest = {
+    current?: number
+    pageSize?: number
+    postQueryRequest?: PostQueryRequest
+    sortField?: string
+    sortOrder?: string
+    userId?: number
+  }
+
+  type PostVO = {
+    content?: string
+    createTime?: string
+    favourNum?: number
+    hasFavour?: boolean
+    hasThumb?: boolean
+    id?: string    // 修改为 string (为了安全)
+    postImg?: string // 新增：补全图片字段
+    tagList?: string[]
+    thumbNum?: number
+    title?: string
+    updateTime?: string
+    user?: UserVO
+    userId?: number
+  }
+
+  type BaseResponsePagePostVO_ = {
+    code?: number
+    data?: PagePostVO_
+    message?: string
+  }
+
+  type PagePostVO_ = {
+    current?: number
+    pages?: number
+    records?: PostVO[]
+    size?: number
+    total?: number
   }
 }

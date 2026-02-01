@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '@/pages/HomePage.vue'
 import UserLoginPage from '@/pages/user/UserLoginPage.vue'
 import UserRegisterPage from '@/pages/user/UserRegisterPage.vue'
@@ -15,6 +15,10 @@ import SearchPicturePage from '@/pages/SearchPicturePage.vue'
 import SpaceAnalyzePage from '@/pages/SpaceAnalyzePage.vue'
 import SpaceUserManagePage from '@/pages/admin/SpaceUserManagePage.vue'
 import UserExchangeVipPage from '@/pages/UserExchangeVipPage.vue'
+// 预留个人详情页组件导入
+import UserDetailPage from '@/pages/user/UserDetailPage.vue'
+// 新增：发帖页面组件导入
+import AddPostPage from '@/pages/AddPostPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -102,12 +106,27 @@ const router = createRouter({
       name: '用户兑换会员',
       component: UserExchangeVipPage,
     },
+    // 新增：个人详情页/个人中心 (已修复语法错误)
+    {
+      path: '/user/my',
+      name: '个人中心',
+      component: UserDetailPage,
+    },
+    {
+      path: '/user/detail/:id',
+      name: '用户详情',
+      component: UserDetailPage,
+      props: true,
+    },
+    // 新增：发布帖子路由 (已去重)
+    {
+      path: '/add_post',
+      name: '发布帖子',
+      component: AddPostPage,
+    },
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue'),
     },
   ],
