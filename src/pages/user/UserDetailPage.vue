@@ -40,20 +40,28 @@
                           <span>
                             {{ formatDate(item.createTime) }}
                           </span>
+                          <span class="action-icon">
+                            <component
+                              :is="item.hasThumb ? LikeFilled : LikeOutlined"
+                              :style="{ color: item.hasThumb ? '#ff4d4f' : 'inherit' }"
+                            />
+                            {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
+                          </span>
+                          <span class="action-icon">
+                            <component
+                              :is="item.hasFavour ? StarFilled : StarOutlined"
+                              :style="{ color: item.hasFavour ? '#faad14' : 'inherit' }"
+                            />
+                            {{ item.favourNum < 0 ? 0 : item.favourNum }}
+                          </span>
                           <a-popconfirm
                             title="确认删除该帖子吗？"
                             ok-text="确认"
                             cancel-text="取消"
                             @confirm="doDelete(item)"
                           >
-                            <span class="action-icon delete-icon">删除</span>
+                            <a-button type="link" danger style="padding: 0">删除</a-button>
                           </a-popconfirm>
-                          <span class="action-icon">
-                            <LikeOutlined /> {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
-                          </span>
-                          <span class="action-icon">
-                            <StarOutlined /> {{ item.favourNum < 0 ? 0 : item.favourNum }}
-                          </span>
                         </a-space>
                       </div>
                     </div>
@@ -100,10 +108,18 @@
                             {{ formatDate(item.createTime) }}
                           </span>
                           <span class="action-icon">
-                            <LikeOutlined /> {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
+                            <component
+                              :is="item.hasThumb ? LikeFilled : LikeOutlined"
+                              :style="{ color: item.hasThumb ? '#ff4d4f' : 'inherit' }"
+                            />
+                            {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
                           </span>
                           <span class="action-icon">
-                            <StarOutlined /> {{ item.favourNum < 0 ? 0 : item.favourNum }}
+                            <component
+                              :is="item.hasFavour ? StarFilled : StarOutlined"
+                              :style="{ color: item.hasFavour ? '#faad14' : 'inherit' }"
+                            />
+                            {{ item.favourNum < 0 ? 0 : item.favourNum }}
                           </span>
                         </a-space>
                       </div>
@@ -151,10 +167,18 @@
                             {{ formatDate(item.createTime) }}
                           </span>
                           <span class="action-icon">
-                            <LikeOutlined /> {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
+                            <component
+                              :is="item.hasThumb ? LikeFilled : LikeOutlined"
+                              :style="{ color: item.hasThumb ? '#ff4d4f' : 'inherit' }"
+                            />
+                            {{ item.thumbNum < 0 ? 0 : item.thumbNum }}
                           </span>
                           <span class="action-icon">
-                            <StarOutlined /> {{ item.favourNum < 0 ? 0 : item.favourNum }}
+                            <component
+                              :is="item.hasFavour ? StarFilled : StarOutlined"
+                              :style="{ color: item.hasFavour ? '#faad14' : 'inherit' }"
+                            />
+                            {{ item.favourNum < 0 ? 0 : item.favourNum }}
                           </span>
                         </a-space>
                       </div>
@@ -182,7 +206,7 @@ import { listMyThumbPostByPage } from '@/api/postThumbController'
 import { listMyPostVOByPage, deletePost } from '@/api/postController'
 import { message } from 'ant-design-vue'
 import { formatDate, getTagColor } from '@/utils'
-import { UserOutlined } from '@ant-design/icons-vue'
+import { LikeFilled, LikeOutlined, StarFilled, StarOutlined, UserOutlined } from '@ant-design/icons-vue'
 
 const loginUserStore = useLoginUserStore()
 const loginUser = computed(() => loginUserStore.loginUser)
