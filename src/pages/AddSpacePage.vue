@@ -3,7 +3,6 @@
     <h2 style="margin-bottom: 16px">
       {{ route.query?.id ? '修改' : '创建' }} {{ SPACE_TYPE_MAP[spaceType] }}
     </h2>
-    <!-- 空间信息表单 -->
     <a-form name="spaceForm" layout="vertical" :model="spaceForm" @finish="handleSubmit">
       <a-form-item name="spaceName" label="空间名称">
         <a-input v-model:value="spaceForm.spaceName" placeholder="请输入空间" allow-clear />
@@ -23,13 +22,18 @@
         </a-button>
       </a-form-item>
     </a-form>
-    <!-- 空间级别介绍 -->
-    <a-card title="空间级别介绍">
+    <a-card title="空间级别介绍" class="space-level-intro-card">
       <a-typography-paragraph>
         * 目前仅支持开通普通版，如需升级空间，请联系
-        <a href="https://codefather.cn" target="_blank">程序员花萍雨</a>
+        <a
+          href="https://github.com/catteacher0515"
+          target="_blank"
+          class="author-link"
+        >
+          程序员花萍雨
+        </a>
       </a-typography-paragraph>
-      <a-typography-paragraph v-for="spaceLevel in spaceLevelList">
+      <a-typography-paragraph v-for="spaceLevel in spaceLevelList" :key="spaceLevel.value">
         {{ spaceLevel.text }}：大小 {{ formatSize(spaceLevel.maxSize) }}，数量
         {{ spaceLevel.maxCount }}
       </a-typography-paragraph>
@@ -47,7 +51,7 @@ import {
   updateSpaceUsingPost,
 } from '@/api/spaceController.ts'
 import { useRoute, useRouter } from 'vue-router'
-import {SPACE_LEVEL_MAP, SPACE_LEVEL_OPTIONS, SPACE_TYPE_ENUM, SPACE_TYPE_MAP} from '@/constants/space.ts'
+import { SPACE_LEVEL_OPTIONS, SPACE_TYPE_ENUM, SPACE_TYPE_MAP } from '@/constants/space.ts'
 import { formatSize } from '../utils'
 
 const space = ref<API.SpaceVO>()
@@ -143,5 +147,25 @@ onMounted(() => {
 #addSpacePage {
   max-width: 720px;
   margin: 0 auto;
+}
+
+/* 作者链接高亮 */
+.author-link {
+  font-weight: bold;
+  color: #1890ff;
+  text-decoration: underline;
+  transition: all 0.3s;
+}
+
+.author-link:hover {
+  color: #40a9ff;
+}
+
+/* 增强手绘感卡片风格，保持 UI 统一 */
+.space-level-intro-card {
+  margin-top: 16px;
+  border: 2px solid #2c3e50;
+  border-radius: 8px;
+  box-shadow: 4px 4px 0px 0px #2c3e50;
 }
 </style>
