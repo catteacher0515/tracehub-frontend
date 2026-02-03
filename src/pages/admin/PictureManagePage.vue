@@ -8,7 +8,6 @@
       </a-space>
     </a-flex>
     <div style="margin-bottom: 16px" />
-    <!-- 搜索表单 -->
     <a-form layout="inline" :model="searchParams" @finish="doSearch">
       <a-form-item label="关键词">
         <a-input
@@ -43,17 +42,34 @@
       </a-form-item>
     </a-form>
     <div style="margin-bottom: 16px" />
-    <!-- 表格 -->
     <a-table
       :columns="columns"
       :data-source="dataList"
       :pagination="pagination"
       @change="doTableChange"
+      :scroll="{ x: 1200 }"
     >
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'url'">
           <a-image :src="record.url" :width="120" />
         </template>
+
+        <template v-if="column.dataIndex === 'name'">
+          <a-tooltip placement="topLeft" :title="record.name">
+            <div
+              style="
+                max-width: 150px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                cursor: pointer;
+              "
+            >
+              {{ record.name }}
+            </div>
+          </a-tooltip>
+        </template>
+
         <template v-if="column.dataIndex === 'tags'">
           <a-space wrap>
             <a-tag v-for="tag in JSON.parse(record.tags || '[]')" :key="tag">
@@ -61,6 +77,7 @@
             </a-tag>
           </a-space>
         </template>
+
         <template v-if="column.dataIndex === 'picInfo'">
           <div>格式：{{ record.picFormat }}</div>
           <div>宽度：{{ record.picWidth }}</div>
@@ -68,6 +85,7 @@
           <div>宽高比：{{ record.picScale }}</div>
           <div>大小：{{ (record.picSize / 1024).toFixed(2) }}KB</div>
         </template>
+
         <template v-if="column.dataIndex === 'reviewMessage'">
           <div>审核状态：{{ PIC_REVIEW_STATUS_MAP[record.reviewStatus] }}</div>
           <div>审核信息：{{ record.reviewMessage }}</div>
@@ -76,12 +94,14 @@
             审核时间：{{ dayjs(record.reviewTime).format('YYYY-MM-DD HH:mm:ss') }}
           </div>
         </template>
+
         <template v-if="column.dataIndex === 'createTime'">
           {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
         <template v-if="column.dataIndex === 'editTime'">
           {{ dayjs(record.editTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
+
         <template v-else-if="column.key === 'action'">
           <a-space wrap>
             <a-button
@@ -133,10 +153,13 @@ const columns = [
   {
     title: '图片',
     dataIndex: 'url',
+    width: 140, // 配合 template 里的 width: 120
   },
   {
     title: '名称',
     dataIndex: 'name',
+    ellipsis: true, // 开启省略模式
+    width: 150,
   },
   {
     title: '简介',
@@ -180,6 +203,8 @@ const columns = [
   {
     title: '操作',
     key: 'action',
+    fixed: 'right',
+    width: 140,
   },
 ]
 
