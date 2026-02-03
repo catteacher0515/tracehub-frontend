@@ -1,7 +1,7 @@
 <template>
   <div id="userDetailPage">
     <a-card>
-      <a-space align="center" :size="24">
+      <div class="user-detail-header">
         <div class="user-avatar-wrapper" @click="triggerAvatarUpload">
           <a-avatar :size="64" :src="loginUser.userAvatar" />
           <div v-if="isLoginUser" class="avatar-hover-mask">
@@ -16,12 +16,15 @@
           accept="image/*"
           @change="handleAvatarChange"
         />
-        <div>
+
+        <div class="user-info-content">
           <div class="user-name-section">
             <div v-if="!isEditingName" @click="startEditName">
-              <div class="username" :class="{ 'editable-text': isLoginUser }">
-                {{ loginUser.userName || '无名' }}
-              </div>
+              <a-tooltip :title="loginUser.userName">
+                <div class="username" :class="{ 'editable-text': isLoginUser }">
+                  {{ loginUser.userName || '无名' }}
+                </div>
+              </a-tooltip>
             </div>
             <a-input
               v-else
@@ -29,13 +32,18 @@
               @blur="saveName"
               @pressEnter="saveName"
               auto-focus
+              size="small"
+              :maxlength="20"
             />
           </div>
+
           <div class="user-profile-section">
             <div v-if="!isEditingProfile" @click="startEditProfile">
-              <div class="user-profile" :class="{ 'editable-text': isLoginUser }">
-                {{ loginUser.userProfile || '暂无简介' }}
-              </div>
+              <a-tooltip :title="loginUser.userProfile">
+                <div class="user-profile" :class="{ 'editable-text': isLoginUser }">
+                  {{ loginUser.userProfile || '暂无简介' }}
+                </div>
+              </a-tooltip>
             </div>
             <a-textarea
               v-else
@@ -44,10 +52,11 @@
               @pressEnter="saveProfile"
               auto-focus
               :rows="2"
+              :maxlength="100"
             />
           </div>
         </div>
-      </a-space>
+      </div>
     </a-card>
 
     <a-card style="margin-top: 16px">
@@ -236,7 +245,6 @@ import { listMyPostVOByPage, deletePost } from '@/api/postController'
 import { message } from 'ant-design-vue'
 import { formatDate, getTagColor } from '@/utils'
 import { EditOutlined, LikeFilled, LikeOutlined, StarFilled, StarOutlined, UserOutlined } from '@ant-design/icons-vue'
-// import { updateUserUsingPost } from '@/api/userController'
 import { updateMyUserUsingPost } from '@/api/userController'
 import { uploadFileUsingPost } from '@/api/fileController'
 
@@ -265,23 +273,14 @@ const triggerAvatarUpload = () => {
   fileInput.value?.click()
 }
 
-// ----------------------------------------------------------------
-// 修复点 1：头像上传（针对图1、2、3的修复）
-// ----------------------------------------------------------------
 const handleAvatarChange = async (e: Event) => {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
   try {
     const response = await uploadFileUsingPost({ biz: 'user_avatar' }, file)
-
-    // 【强制断言】既然我们知道它是 BaseResponse，就直接告诉 TS
-    // 这里先取出 data，防止 TS 在 response 上找 code 报错
     const res = response.data as any
 
-    // console.log("Debug upload:", res) // 可选：保留调试
-
     if (res.code === 0 && res.data) {
-      // 图3修复：TS 认为 res.data 可能是 boolean 或 string，强制转为 string
       await updateMyUserUsingPost({ id: loginUser.value.id, userAvatar: res.data as string })
       message.success('头像更新成功')
       await loginUserStore.fetchLoginUser()
@@ -303,7 +302,6 @@ const saveName = async () => {
   if (editingUserName.value !== loginUser.value.userName) {
     try {
       const response = await updateMyUserUsingPost({ id: loginUser.value.id, userName: editingUserName.value })
-      // 通用修复：使用 as any 规避 AxiosResponse 类型定义不完整的问题
       const res = response.data as any
       if (res.code === 0) {
         message.success('昵称更新成功')
@@ -348,9 +346,6 @@ const favourPostList = ref<API.PostVO[]>([])
 const thumbPostList = ref<API.PostVO[]>([])
 const loading = ref(false)
 
-// ----------------------------------------------------------------
-// 修复点 4：列表加载（针对图4的修复）
-// ----------------------------------------------------------------
 const loadData = async () => {
   loading.value = true
   try {
@@ -361,13 +356,9 @@ const loadData = async () => {
         sortField: 'createTime',
         sortOrder: 'descend',
       })
-
-      // 图4修复：BaseResponsePagePostVO_ 类型定义可能缺失 records 字段
-      // 使用 as any 暴力解决，因为我们确定运行时的结构是对的
       const res = response.data as any
 
       if (res.code === 0 && res.data) {
-        // 安全访问：如果 res.data.records 存在则使用，否则空数组
         myPostList.value = res.data.records || []
       } else {
         message.error('加载我的帖子失败：' + (res.message || '未知错误'))
@@ -420,13 +411,8 @@ const doDelete = async (item: API.PostVO) => {
   }
 }
 
-// ----------------------------------------------------------------
-// 修复点：标签解析（针对图5、6的确认）
-// ----------------------------------------------------------------
 const parseTags = (tags: any) => {
   if (!tags) return []
-  // 你的 Debugger 显示 tags 是 "[\"测试\"]" (String类型)
-  // 所以这个逻辑是完全正确的，不需要动
   if (typeof tags === 'string') {
     try {
       return JSON.parse(tags)
@@ -443,27 +429,65 @@ const onTabChange = () => {
 }
 
 onMounted(() => {
-  if (!loginUser.value.id) {
-    // message.warning('请先登录')
-  }
   loadData()
 })
 </script>
 
 <style scoped>
-/* 样式部分保持不变 */
-.username {
-  font-size: 20px;
-  font-weight: bold;
-}
-.user-profile {
-  color: #666;
-  margin-top: 4px;
+/* 核心布局修复：Web 端单行护航 */
+.user-detail-header {
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  gap: 24px;
+  flex-wrap: nowrap; /* 绝对禁止换行 */
 }
 
 .user-avatar-wrapper {
   position: relative;
   cursor: pointer;
+  flex-shrink: 0; /* 头像绝对禁止被挤压 */
+}
+
+/* 信息内容区：自适应宽度的关键 */
+.user-info-content {
+  flex: 1; /* 占据剩余空间 */
+  min-width: 0; /* 激活 Flex 子元素的文本截断能力 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden; /* 防止内容溢出容器 */
+}
+
+/* 移除导致挤压的 min-width 硬编码 */
+.user-name-section,
+.user-profile-section {
+  width: 100%; /* 占满父容器 */
+  /* min-width: 200px;  <-- 已移除，去掉了钢筋 */
+}
+
+/* 文本截断核心样式 */
+.username {
+  font-size: 20px;
+  font-weight: bold;
+  max-width: 10em;  /* 约等于5-6个汉字 + 省略号，你可以根据需要改成 150px */
+
+  /* 移除 max-width，完全依赖 flex 自适应 */
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;UserDetailPage.vue
+}
+
+.user-profile {
+  color: #666;
+  margin-top: 4px;
+
+  /* 移除 max-width */
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .avatar-hover-mask {
@@ -498,9 +522,10 @@ onMounted(() => {
   border-bottom-color: #1890ff;
 }
 
-.user-name-section,
-.user-profile-section {
-  min-width: 200px;
+/* 编辑框适配：编辑时可以给一个限制防止太宽 */
+.user-name-section .ant-input,
+.user-profile-section .ant-textarea {
+  max-width: 300px;
 }
 
 .post-card-container {

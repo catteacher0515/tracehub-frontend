@@ -18,11 +18,11 @@
           class="hand-menu"
         />
       </a-col>
-      <a-col flex="120px">
+      <a-col flex="200px">
         <div class="user-login-status">
           <div v-if="loginUserStore.loginUser.id">
             <a-dropdown>
-              <a-space>
+              <a-space :size="8">
                 <a-avatar :src="loginUserStore.loginUser.userAvatar" class="hand-avatar" />
                 <span class="username">{{ loginUserStore.loginUser.userName ?? '无名' }}</span>
               </a-space>
@@ -57,12 +57,10 @@ import { type MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/userController.ts'
-// ⚠️ 请确保文件名一致，建议重命名为 tracehub-logo.png
 import logo from '@/assets/tracehub-logo.png'
 
 const loginUserStore = useLoginUserStore()
 
-// 菜单列表
 const originItems = [
   { key: '/', icon: () => h(HomeOutlined), label: '主页', title: '主页' },
   { key: '/add_picture', label: '创建', title: '创建图片' },
@@ -71,7 +69,6 @@ const originItems = [
   { key: '/admin/spaceManage', label: '空间', title: '空间管理' },
 ]
 
-// 权限过滤
 const filterMenus = (menus = [] as MenuProps['items']) => {
   return menus?.filter((menu) => {
     if (menu?.key?.startsWith('/admin')) {
@@ -86,17 +83,14 @@ const items = computed(() => filterMenus(originItems))
 const router = useRouter()
 const current = ref<string[]>([])
 
-// 路由监听
 router.afterEach((to) => {
   current.value = [to.path]
 })
 
-// 点击菜单跳转
 const doMenuClick = ({ key }) => {
   router.push({ path: key })
 }
 
-// 退出登录
 const doLogout = async () => {
   const res = await userLogoutUsingPost()
   if (res.data.code === 0) {
@@ -116,29 +110,35 @@ const doLogout = async () => {
 }
 
 .logo {
-  /* 🌟 修改重点：放大 Logo，移除边框 */
   height: 56px;
   margin-right: 12px;
-  /* 之前的手绘边框代码已删除 */
 }
 
 .title {
   color: #000;
   font-size: 24px;
   font-weight: bold;
-  /* 使用手写字体 */
   font-family: 'Patrick Hand', cursive;
 }
 
-/* 头像手绘框 */
 .hand-avatar {
   border: 2px solid #2c3e50;
   background: #fff;
+  flex-shrink: 0;
 }
 
+/* 🌟 修改 3：关键的 7 字宽度限制逻辑 */
 .username {
   font-weight: bold;
   font-family: 'Patrick Hand', cursive;
+
+  /* 7个中文字符宽度 + 略微冗余量，设置在 7.5em 到 8em 比较稳妥 */
+  max-width: 8em;
+  display: inline-block;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 菜单样式覆盖 */
@@ -152,7 +152,6 @@ const doLogout = async () => {
   border: 2px solid transparent;
 }
 
-/* 选中菜单项：荧光笔高亮 + 倾斜 */
 :deep(.ant-menu-item-selected) {
   background-color: #ffcc00 !important;
   color: #000 !important;
@@ -163,5 +162,11 @@ const doLogout = async () => {
 
 :deep(.ant-menu-item::after) {
   border-bottom: none !important;
+}
+
+/* 保证状态栏内容靠右对齐，避免名字短的时候头像离菜单太远 */
+.user-login-status {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
