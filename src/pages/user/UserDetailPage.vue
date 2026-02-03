@@ -37,6 +37,13 @@
             />
           </div>
 
+          <div class="user-id-section" v-if="loginUser.id">
+            <span class="id-text">ID: {{ loginUser.id }}</span>
+            <a-tooltip title="复制 ID">
+              <CopyOutlined class="copy-icon" @click="copyId" />
+            </a-tooltip>
+          </div>
+
           <div class="user-profile-section">
             <div v-if="!isEditingProfile" @click="startEditProfile">
               <a-tooltip :title="loginUser.userProfile">
@@ -244,7 +251,15 @@ import { listMyThumbPostByPage } from '@/api/postThumbController'
 import { listMyPostVOByPage, deletePost } from '@/api/postController'
 import { message } from 'ant-design-vue'
 import { formatDate, getTagColor } from '@/utils'
-import { EditOutlined, LikeFilled, LikeOutlined, StarFilled, StarOutlined, UserOutlined } from '@ant-design/icons-vue'
+import {
+  EditOutlined,
+  LikeFilled,
+  LikeOutlined,
+  StarFilled,
+  StarOutlined,
+  UserOutlined,
+  CopyOutlined // 引入复制图标
+} from '@ant-design/icons-vue'
 import { updateMyUserUsingPost } from '@/api/userController'
 import { uploadFileUsingPost } from '@/api/fileController'
 
@@ -314,6 +329,17 @@ const saveName = async () => {
     }
   }
   isEditingName.value = false
+}
+
+// 【新增】复制 ID 逻辑
+const copyId = async () => {
+  if (!loginUser.value.id) return
+  try {
+    await navigator.clipboard.writeText(String(loginUser.value.id))
+    message.success('已复制用户 ID')
+  } catch (e) {
+    message.error('复制失败，请手动复制')
+  }
 }
 
 const startEditProfile = () => {
@@ -458,11 +484,29 @@ onMounted(() => {
   overflow: hidden; /* 防止内容溢出容器 */
 }
 
-/* 移除导致挤压的 min-width 硬编码 */
 .user-name-section,
 .user-profile-section {
   width: 100%; /* 占满父容器 */
-  /* min-width: 200px;  <-- 已移除，去掉了钢筋 */
+}
+
+/* 【新增】ID 区域样式 */
+.user-id-section {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  color: #8c8c8c;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* 文字和图标的间距 */
+}
+
+.copy-icon {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.copy-icon:hover {
+  color: #1890ff; /* 悬停变色，提示可点击 */
 }
 
 /* 文本截断核心样式 */
@@ -470,20 +514,16 @@ onMounted(() => {
   font-size: 20px;
   font-weight: bold;
   max-width: 10em;  /* 约等于5-6个汉字 + 省略号，你可以根据需要改成 150px */
-
-  /* 移除 max-width，完全依赖 flex 自适应 */
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: block;UserDetailPage.vue
+  display: block;
 }
 
 .user-profile {
   color: #666;
   margin-top: 4px;
-
-  /* 移除 max-width */
   width: 100%;
   white-space: nowrap;
   overflow: hidden;
@@ -522,7 +562,6 @@ onMounted(() => {
   border-bottom-color: #1890ff;
 }
 
-/* 编辑框适配：编辑时可以给一个限制防止太宽 */
 .user-name-section .ant-input,
 .user-profile-section .ant-textarea {
   max-width: 300px;

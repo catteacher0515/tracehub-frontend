@@ -5,15 +5,14 @@
       <a-space>
         <a-button type="primary" href="/add_space" target="_blank">+ 创建空间</a-button>
         <a-button type="primary" ghost href="/space_analyze?queryPublic=1" target="_blank"
-          >分析公共图库
+        >分析公共图库
         </a-button>
         <a-button type="primary" ghost href="/space_analyze?queryAll=1" target="_blank"
-          >分析全部空间
+        >分析全部空间
         </a-button>
       </a-space>
     </a-flex>
     <div style="margin-bottom: 16px" />
-    <!-- 添加成员表单 -->
     <a-form layout="inline" :model="formData" @finish="handleSubmit">
       <a-form-item label="用户 id" name="userId">
         <a-input v-model:value="formData.userId" placeholder="请输入用户 id" allow-clear />
@@ -23,7 +22,6 @@
       </a-form-item>
     </a-form>
     <div style="margin-bottom: 16px" />
-    <!-- 表格 -->
     <a-table :columns="columns" :data-source="dataList">
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'userInfo'">
@@ -32,25 +30,33 @@
             {{ record.user?.userName }}
           </a-space>
         </template>
+
         <template v-if="column.dataIndex === 'spaceRole'">
           <a-select
             v-model:value="record.spaceRole"
             :options="SPACE_ROLE_OPTIONS"
             @change="(value) => editSpaceRole(value, record)"
+            :disabled="isSpaceOwner(record.userId)"
           />
         </template>
+
         <template v-else-if="column.dataIndex === 'createTime'">
           {{ dayjs(record.createTime).format('YYYY-MM-DD HH:mm:ss') }}
         </template>
+
         <template v-else-if="column.key === 'action'">
           <a-space wrap>
-            <a-button type="link" danger @click="doDelete(record.id)">删除</a-button>
+            <span v-if="isSpaceOwner(record.userId)" style="color: #999; font-weight: bold">
+              创建者
+            </span>
+            <a-button v-else type="link" danger @click="doDelete(record.id)">删除</a-button>
           </a-space>
         </template>
       </template>
     </a-table>
   </div>
 </template>
+
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
@@ -61,6 +67,7 @@ import {
   editSpaceUserUsingPost,
   listSpaceUserUsingPost,
 } from '@/api/spaceUserController.ts'
+import { getSpaceVoByIdUsingGet } from '@/api/spaceController.ts' // 【新增】引入获取空间详情接口
 import dayjs from 'dayjs'
 
 interface Props {
@@ -90,8 +97,10 @@ const columns = [
 
 // 定义数据
 const dataList = ref<API.SpaceUserVO[]>([])
+// 【新增】存储当前空间的详情信息（主要是为了拿 userId 即创建者ID）
+const space = ref<API.SpaceVO>()
 
-// 获取数据
+// 获取空间成员数据
 const fetchData = async () => {
   const spaceId = props.id
   if (!spaceId) {
@@ -107,9 +116,28 @@ const fetchData = async () => {
   }
 }
 
-// 页面加载时获取数据，请求一次
+// 【新增】获取空间详情（为了确定谁是老板）
+const fetchSpace = async () => {
+  const spaceId = props.id
+  if (!spaceId) return
+  const res = await getSpaceVoByIdUsingGet({
+    id: spaceId,
+  })
+  if (res.data.code === 0 && res.data.data) {
+    space.value = res.data.data
+  }
+}
+
+// 【新增】辅助函数：判断某人是否是当前空间的创建者
+const isSpaceOwner = (userId: number) => {
+  if (!space.value) return false
+  return space.value.userId === userId
+}
+
+// 页面加载时获取数据
 onMounted(() => {
   fetchData()
+  fetchSpace() // 【新增】加载空间详情
 })
 
 // 添加成员表单
@@ -144,6 +172,8 @@ const editSpaceRole = async (value, record) => {
     message.success('修改成功')
   } else {
     message.error('修改失败，' + res.data.message)
+    // 如果失败了（虽然前端已经屏蔽了，但为了健壮性），最好回滚一下状态，这里简单刷新列表
+    fetchData()
   }
 }
 
