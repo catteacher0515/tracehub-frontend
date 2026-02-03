@@ -680,6 +680,12 @@ declare namespace API {
     userPassword?: string
   }
 
+  type UserUpdateMyRequest = {
+    userAvatar?: string;
+    userName?: string;
+    userProfile?: string;
+  };
+
   type UserQueryRequest = {
     current?: number
     id?: number

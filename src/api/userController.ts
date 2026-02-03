@@ -1,4 +1,3 @@
-// @ts-ignore
 /* eslint-disable */
 import request from '@/request'
 
@@ -12,6 +11,22 @@ export async function addUserUsingPost(body: API.UserAddRequest, options?: { [ke
     data: body,
     ...(options || {}),
   })
+}
+
+// src/api/userController.ts
+/** 更新个人信息 POST /api/user/update/my */
+export async function updateMyUserUsingPost(
+  body: API.UserUpdateMyRequest, // 现在这就不会报错了
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/update/my', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
 }
 
 /** deleteUser POST /api/user/delete */
