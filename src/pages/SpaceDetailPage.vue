@@ -1,6 +1,5 @@
 <template>
   <div id="spaceDetailPage">
-    <!-- 空间信息 -->
     <a-flex justify="space-between">
       <h2>{{ space.spaceName }}（{{ SPACE_TYPE_MAP[space.spaceType] }}）</h2>
       <a-space size="middle">
@@ -12,8 +11,9 @@
         >
           + 创建图片
         </a-button>
+
         <a-button
-          v-if="canManageSpaceUser"
+          v-if="space.spaceType === SPACE_TYPE_ENUM.TEAM"
           type="primary"
           ghost
           :icon="h(TeamOutlined)"
@@ -22,6 +22,7 @@
         >
           成员管理
         </a-button>
+
         <a-button
           v-if="canManageSpaceUser"
           type="primary"
@@ -45,14 +46,11 @@
       </a-space>
     </a-flex>
     <div style="margin-bottom: 16px" />
-    <!-- 搜索表单 -->
     <PictureSearchForm :onSearch="onSearch" />
     <div style="margin-bottom: 16px" />
-    <!-- 按颜色搜索，跟其他搜索条件独立 -->
     <a-form-item label="按颜色搜索">
       <color-picker format="hex" @pureColorChange="onColorChange" />
     </a-form-item>
-    <!-- 图片列表 -->
     <PictureList
       :dataList="dataList"
       :loading="loading"
@@ -61,7 +59,6 @@
       :canDelete="canDeletePicture"
       :onReload="fetchData"
     />
-    <!-- 分页 -->
     <a-pagination
       style="text-align: right"
       v-model:current="searchParams.current"
@@ -93,7 +90,8 @@ import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
 import BatchEditPictureModal from '@/components/BatchEditPictureModal.vue'
 import { BarChartOutlined, EditOutlined, TeamOutlined } from '@ant-design/icons-vue'
-import { SPACE_PERMISSION_ENUM, SPACE_TYPE_MAP } from '../constants/space.ts'
+// 【核心修改】引入 SPACE_TYPE_ENUM 用于判断空间类型
+import { SPACE_PERMISSION_ENUM, SPACE_TYPE_MAP, SPACE_TYPE_ENUM } from '../constants/space.ts'
 
 interface Props {
   id: string | number
