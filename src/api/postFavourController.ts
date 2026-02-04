@@ -1,8 +1,9 @@
+// @ts-ignore
 /* eslint-disable */
 import request from '@/request'
 
 /** doPostFavour POST /api/post_favour/ */
-export async function doPostFavour(
+export async function doPostFavourUsingPost(
   body: API.PostFavourAddRequest,
   options?: { [key: string]: any }
 ) {
@@ -17,11 +18,11 @@ export async function doPostFavour(
 }
 
 /** listMyFavourPostByPage POST /api/post_favour/my/list/page */
-export async function listMyFavourPostByPage(
+export async function listMyFavourPostByPageUsingPost(
   body: API.PostFavourQueryRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/post_favour/my/list/page', {
+  return request<API.BaseResponsePagePost_>('/api/post_favour/my/list/page', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

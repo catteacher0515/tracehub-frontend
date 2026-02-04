@@ -83,10 +83,9 @@ declare namespace API {
     message?: string
   }
 
-// 修正：Long 类型的数据在前端建议统一用 string 接收，防止雪花 ID 精度丢失
   type BaseResponseLong_ = {
     code?: number
-    data?: string  // 修改为 string
+    data?: number
     message?: string
   }
 
@@ -99,6 +98,18 @@ declare namespace API {
   type BaseResponsePagePictureVO_ = {
     code?: number
     data?: PagePictureVO_
+    message?: string
+  }
+
+  type BaseResponsePagePost_ = {
+    code?: number
+    data?: PagePost_
+    message?: string
+  }
+
+  type BaseResponsePagePostVO_ = {
+    code?: number
+    data?: PagePostVO_
     message?: string
   }
 
@@ -135,6 +146,12 @@ declare namespace API {
   type BaseResponsePictureVO_ = {
     code?: number
     data?: PictureVO
+    message?: string
+  }
+
+  type BaseResponsePostVO_ = {
+    code?: number
+    data?: PostVO
     message?: string
   }
 
@@ -193,7 +210,7 @@ declare namespace API {
   }
 
   type DeleteRequest = {
-    id?: number | string
+    id?: number
   }
 
   type GetOutPaintingTaskResponse = {
@@ -212,6 +229,11 @@ declare namespace API {
   }
 
   type getPictureVOByIdUsingGETParams = {
+    /** id */
+    id?: number
+  }
+
+  type getPostVOByIdUsingGETParams = {
     /** id */
     id?: number
   }
@@ -286,6 +308,22 @@ declare namespace API {
     total?: number
   }
 
+  type PagePost_ = {
+    current?: number
+    pages?: number
+    records?: Post[]
+    size?: number
+    total?: number
+  }
+
+  type PagePostVO_ = {
+    current?: number
+    pages?: number
+    records?: PostVO[]
+    size?: number
+    total?: number
+  }
+
   type PageSpace_ = {
     current?: number
     pages?: number
@@ -321,7 +359,9 @@ declare namespace API {
     rightOffset?: number
     topOffset?: number
     xScale?: number
+    xscale?: number
     yScale?: number
+    yscale?: number
   }
 
   type Picture = {
@@ -446,6 +486,88 @@ declare namespace API {
     url?: string
     user?: UserVO
     userId?: number
+  }
+
+  type Post = {
+    content?: string
+    createTime?: string
+    editTime?: string
+    favourNum?: number
+    id?: number
+    isDelete?: number
+    postImg?: string
+    reviewMessage?: string
+    reviewStatus?: number
+    reviewTime?: string
+    reviewerId?: number
+    tags?: string
+    thumbNum?: number
+    title?: string
+    updateTime?: string
+    userId?: number
+    viewNum?: number
+  }
+
+  type PostAddRequest = {
+    content?: string
+    postImg?: string
+    tags?: string[]
+    title?: string
+  }
+
+  type PostFavourAddRequest = {
+    postId?: number
+  }
+
+  type PostFavourQueryRequest = {
+    current?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+  }
+
+  type PostQueryRequest = {
+    content?: string
+    current?: number
+    id?: number
+    pageSize?: number
+    reviewStatus?: number
+    searchText?: string
+    sortField?: string
+    sortOrder?: string
+    tags?: string[]
+    title?: string
+    userId?: number
+  }
+
+  type PostThumbAddRequest = {
+    postId?: number
+  }
+
+  type PostThumbQueryRequest = {
+    current?: number
+    pageSize?: number
+    sortField?: string
+    sortOrder?: string
+  }
+
+  type PostVO = {
+    content?: string
+    createTime?: string
+    editTime?: string
+    favourNum?: number
+    hasFavour?: boolean
+    hasThumb?: boolean
+    id?: number
+    postImg?: string
+    reviewStatus?: number
+    tags?: string
+    thumbNum?: number
+    title?: string
+    updateTime?: string
+    user?: UserVO
+    userId?: number
+    viewNum?: number
   }
 
   type SearchPictureByColorRequest = {
@@ -651,6 +773,7 @@ declare namespace API {
   }
 
   type User = {
+    admin?: boolean
     createTime?: string
     editTime?: string
     id?: number
@@ -662,9 +785,6 @@ declare namespace API {
     userPassword?: string
     userProfile?: string
     userRole?: string
-    vipCode?: string
-    vipExpireTime?: string
-    vipNumber?: number
   }
 
   type UserAddRequest = {
@@ -679,12 +799,6 @@ declare namespace API {
     userAccount?: string
     userPassword?: string
   }
-
-  type UserUpdateMyRequest = {
-    userAvatar?: string;
-    userName?: string;
-    userProfile?: string;
-  };
 
   type UserQueryRequest = {
     current?: number
@@ -704,6 +818,12 @@ declare namespace API {
     userPassword?: string
   }
 
+  type UserUpdateMyRequest = {
+    userAvatar?: string
+    userName?: string
+    userProfile?: string
+  }
+
   type UserUpdateRequest = {
     id?: number
     userAvatar?: string
@@ -720,96 +840,5 @@ declare namespace API {
     userName?: string
     userProfile?: string
     userRole?: string
-    vipCode?: string
-    vipExpireTime?: string
-    vipNumber?: number
-  }
-
-  type VipExchangeRequest = {
-    vipCode?: string
-  }
-
-  type PostAddRequest = {
-    content?: string
-    postImg?: string
-    tags?: string[]
-    title?: string
-  }
-
-  type PostFavourAddRequest = {
-    postId?: number
-  }
-
-  type PostFavourQueryRequest = {
-    current?: number
-    pageSize?: number
-    postQueryRequest?: PostQueryRequest
-    sortField?: string
-    sortOrder?: string
-    userId?: number
-  }
-
-  type PostQueryRequest = {
-    content?: string
-    current?: number
-    favourUserId?: number
-    id?: number
-    notId?: number
-    pageSize?: number
-    searchText?: string
-    sortField?: string
-    sortOrder?: string
-    tags?: string[]
-    title?: string
-    userId?: number
-  }
-
-  type PostThumbAddRequest = {
-    postId?: number
-  }
-
-  type PostThumbQueryRequest = {
-    current?: number
-    pageSize?: number
-    postQueryRequest?: PostQueryRequest
-    sortField?: string
-    sortOrder?: string
-    userId?: number
-  }
-
-  type PostVO = {
-    content?: string
-    createTime?: string
-    favourNum?: number
-    hasFavour?: boolean
-    hasThumb?: boolean
-    id?: string    // 修改为 string (为了安全)
-    postImg?: string // 新增：补全图片字段
-    tagList?: string[]
-    thumbNum?: number
-    title?: string
-    updateTime?: string
-    user?: UserVO
-    userId?: number
-  }
-
-  type BaseResponsePostVO_ = {
-    code?: number
-    data?: PostVO
-    message?: string
-  }
-
-  type BaseResponsePagePostVO_ = {
-    code?: number
-    data?: PagePostVO_
-    message?: string
-  }
-
-  type PagePostVO_ = {
-    current?: number
-    pages?: number
-    records?: PostVO[]
-    size?: number
-    total?: number
   }
 }
