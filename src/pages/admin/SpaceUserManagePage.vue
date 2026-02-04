@@ -10,6 +10,15 @@
         <a-button type="primary" ghost href="/space_analyze?queryAll=1" target="_blank"
         >分析全部空间
         </a-button>
+        <a-popconfirm
+          v-if="isOwner"
+          title="确定要解散该团队空间吗？此操作不可逆，所有图片和成员将被永久删除！"
+          ok-text="狠心解散"
+          cancel-text="再想想"
+          @confirm="doDeleteSpace"
+        >
+          <a-button type="primary" danger ghost>解散空间</a-button>
+        </a-popconfirm>
       </a-space>
     </a-flex>
     <div style="margin-bottom: 16px" />
@@ -79,7 +88,6 @@
 import { onMounted, reactive, ref, computed } from 'vue'
 import { message } from 'ant-design-vue'
 import { SPACE_ROLE_OPTIONS } from '../../constants/space.ts'
-// 这里的引用现在应该不会报错了，因为你在第一步里补上了 quitTeamSpaceUsingPost
 import {
   addSpaceUserUsingPost,
   deleteSpaceUserUsingPost,
@@ -87,8 +95,11 @@ import {
   listSpaceUserUsingPost,
   quitTeamSpaceUsingPost,
 } from '@/api/spaceUserController.ts'
-import { getSpaceVoByIdUsingGet } from '@/api/spaceController.ts'
+// 【核心修改】引入 deleteSpaceUsingPost
+import { getSpaceVoByIdUsingGet, deleteSpaceUsingPost } from '@/api/spaceController.ts'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
+// 【核心修改】引入 useRouter
+import { useRouter } from 'vue-router'
 import dayjs from 'dayjs'
 
 interface Props {
@@ -98,6 +109,7 @@ interface Props {
 const props = defineProps<Props>()
 const loginUserStore = useLoginUserStore()
 const loginUser = loginUserStore.loginUser
+const router = useRouter() // 初始化 router
 
 const columns = [
   { title: '用户', dataIndex: 'userInfo' },
@@ -122,6 +134,12 @@ const isAdmin = computed(() => {
   return me?.spaceRole === 'admin' || isSpaceOwner(loginUser.id)
 })
 
+// 【核心新增】判断当前登录用户是否为该空间的创建者 (Owner)
+const isOwner = computed(() => {
+  // 必须确保 space 已加载，且 loginUser 已加载
+  return space.value?.userId && loginUser.id && String(space.value.userId) === String(loginUser.id)
+})
+
 const fetchData = async () => {
   const spaceId = props.id
   if (!spaceId) return
@@ -142,7 +160,7 @@ const fetchSpace = async () => {
   }
 }
 
-// 修复类型报错：给参数加上类型注解
+// 辅助函数：判断某用户是否是创建者
 const isSpaceOwner = (userId: number | string | undefined) => {
   if (!space.value?.userId || !userId) return false
   return String(space.value.userId) === String(userId)
@@ -170,7 +188,6 @@ const handleSubmit = async () => {
   }
 }
 
-// 修复类型报错：value 是 string, record 是对象
 const editSpaceRole = async (value: string, record: API.SpaceUserVO) => {
   const res = await editSpaceUserUsingPost({
     id: record.id,
@@ -184,7 +201,6 @@ const editSpaceRole = async (value: string, record: API.SpaceUserVO) => {
   }
 }
 
-// 修复类型报错：id 可能为 undefined，虽然业务上不可能，但 TS 会警告
 const doDelete = async (id?: number) => {
   if (!id) return
   const res = await deleteSpaceUserUsingPost({ id })
@@ -196,15 +212,28 @@ const doDelete = async (id?: number) => {
   }
 }
 
-// 修复类型报错
 const doQuit = async (id?: number) => {
   if (!id) return
   const res = await quitTeamSpaceUsingPost({ id })
   if (res.data.code === 0) {
     message.success('退出成功')
-    window.location.href = '/my_space'
+    router.replace('/my_space')
   } else {
     message.error('退出失败，' + res.data.message)
+  }
+}
+
+// 【核心新增】解散空间逻辑
+const doDeleteSpace = async () => {
+  const spaceId = props.id
+  if (!spaceId) return
+  const res = await deleteSpaceUsingPost({ id: spaceId as any })
+  if (res.data.code === 0) {
+    message.success('空间已解散')
+    // 解散后跳转到我的空间列表
+    router.replace('/my_space')
+  } else {
+    message.error('解散失败，' + res.data.message)
   }
 }
 </script>
