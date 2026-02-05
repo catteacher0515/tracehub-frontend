@@ -88,8 +88,8 @@ import {
 } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { listPostVOByPageUsingPost } from '@/api/postController'
-import { doPostThumb } from '@/api/postThumbController'
-import { doPostFavour } from '@/api/postFavourController'
+import { doPostThumbUsingPost } from '@/api/postThumbController'
+import { doPostFavourUsingPost } from '@/api/postFavourController';
 import { formatDate, getTagColor } from '@/utils'
 
 const postList = ref<API.PostVO[]>([])
@@ -149,7 +149,7 @@ const searchByTag = (tag: string) => {
 
 const doThumb = async (item: API.PostVO) => {
   try {
-    const res = await doPostThumb({ postId: item.id as any })
+    const res = await doPostThumbUsingPost({ postId: item.id as any })
     if (res.data.code === 0) {
       const result = res.data.data
       // result: 1-点赞, -1-取消点赞
@@ -166,7 +166,7 @@ const doThumb = async (item: API.PostVO) => {
 
 const doFavour = async (item: API.PostVO) => {
   try {
-    const res = await doPostFavour({ postId: item.id as any })
+    const res = await doPostFavourUsingPost({ postId: item.id as any })
     if (res.data.code === 0) {
       const result = res.data.data
       // result: 1-收藏, -1-取消收藏

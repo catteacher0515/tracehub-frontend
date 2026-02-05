@@ -174,8 +174,9 @@
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore'
-import { listMyFavourPostByPage } from '@/api/postFavourController'
-import { listMyThumbPostByPage } from '@/api/postThumbController'
+// ✅ 修复点 1：使用正确的新函数名进行引入
+import { listMyFavourPostByPageUsingPost } from '@/api/postFavourController'
+import { listMyThumbPostByPageUsingPost } from '@/api/postThumbController';
 import { listMyPostVOByPage, deletePost, listPostVoByPageUsingPost } from '@/api/postController'
 import { getUserVoByIdUsingGet, updateMyUserUsingPost } from '@/api/userController'
 import { uploadFileUsingPost } from '@/api/fileController'
@@ -346,11 +347,12 @@ const loadData = async () => {
       }
     }
     else if (activeKey.value === 'favour' && isLoginUser.value) {
-      const res = await listMyFavourPostByPage({ current: 1, pageSize: 10 })
+      // ✅ 修复点 2：调用处也同步更新为 listMyFavourPostByPageUsingPost
+      const res = await listMyFavourPostByPageUsingPost({ current: 1, pageSize: 10 })
       if (res.data.code === 0) favourPostList.value = res.data.data?.records || []
     }
     else if (activeKey.value === 'thumb' && isLoginUser.value) {
-      const res = await listMyThumbPostByPage({ current: 1, pageSize: 10 })
+      const res = await listMyThumbPostByPageUsingPost({ current: 1, pageSize: 10 })
       if (res.data.code === 0) thumbPostList.value = res.data.data?.records || []
     }
   } catch (e: any) {
@@ -389,32 +391,23 @@ const onTabChange = () => {
 
 // ==============================================================================
 // 🌟 核心修复区：双哨兵机制 (The Double Sentinel)
-// 将这部分放在所有函数定义的下面，确保 loadData 和 loadUserInfo 已经被定义，
-// 彻底解决“函数未定义”和“时序错位”的问题。
 // ==============================================================================
 
 /**
  * 统一数据加载入口
- * 无论是路由变了，还是Store变了，都走这里
  */
 const initData = () => {
-  // 1. 如果是“看自己”
   if (isLoginUser.value) {
-    // 同步个人信息
     userDetail.value = loginUser.value;
-    // 加载帖子
     loadData();
   }
-  // 2. 如果是“看别人” (且路由里有ID)
   else if (route.params.id) {
-    // 加载访客视角的个人信息
     loadUserInfo();
-    // 加载帖子
     loadData();
   }
 }
 
-// 监听器 1：路由哨兵 (immediate: true 保证进页面就执行)
+// 监听器 1：路由哨兵
 watch(
   () => route.params.id,
   () => {
@@ -423,11 +416,10 @@ watch(
   { immediate: true }
 );
 
-// 监听器 2：仓库哨兵 (deep: true 保证 Store 数据回来时触发)
+// 监听器 2：仓库哨兵
 watch(
   () => loginUser.value,
   () => {
-    // 只有在“看自己”的情况下，仓库变动才需要刷新页面
     if (isLoginUser.value) {
       initData();
     }

@@ -84,8 +84,8 @@ import { message } from 'ant-design-vue'
 import { LikeOutlined, LikeTwoTone, StarOutlined, StarTwoTone } from '@ant-design/icons-vue'
 import MarkdownIt from 'markdown-it'
 import { getPostVOByIdUsingGet } from '@/api/postController'
-import { doPostThumb } from '@/api/postThumbController'
-import { doPostFavour } from '@/api/postFavourController'
+import { doPostThumbUsingPost } from '@/api/postThumbController'
+import { doPostFavourUsingPost } from '@/api/postFavourController'
 import { formatDate, getTagColor } from '@/utils'
 
 const route = useRoute()
@@ -133,7 +133,7 @@ const searchByTag = (tag: string) => {
 const doThumb = async () => {
   if (!post.value?.id) return
   try {
-    const res = await doPostThumb({ postId: post.value.id as any })
+    const res = await doPostThumbUsingPost({ postId: post.value.id as any })
     if (res.data.code === 0) {
       const result = res.data.data
       const newHasThumb = result === 1
@@ -152,7 +152,7 @@ const doThumb = async () => {
 const doFavour = async () => {
   if (!post.value?.id) return
   try {
-    const res = await doPostFavour({ postId: post.value.id as any })
+    const res = await doPostFavourUsingPost({ postId: post.value.id as any })
     if (res.data.code === 0) {
       const result = res.data.data
       const newHasFavour = result === 1
@@ -276,7 +276,7 @@ onMounted(() => {
     padding: 16px;
     padding-bottom: 80px;
   }
-  
+
   .bottom-action-bar {
     width: 90%;
     justify-content: space-around;

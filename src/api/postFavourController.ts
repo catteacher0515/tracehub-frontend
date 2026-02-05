@@ -1,8 +1,7 @@
-// @ts-ignore
 /* eslint-disable */
 import request from '@/request'
 
-/** doPostFavour POST /api/post_favour/ */
+/** doPostFavourUsingPost POST /api/post_favour/ */
 export async function doPostFavourUsingPost(
   body: API.PostFavourAddRequest,
   options?: { [key: string]: any }
