@@ -1,3 +1,4 @@
+// @ts-ignore
 /* eslint-disable */
 import request from '@/request'
 
@@ -13,43 +14,12 @@ export async function addUserUsingPost(body: API.UserAddRequest, options?: { [ke
   })
 }
 
-// src/api/userController.ts
-/** 更新个人信息 POST /api/user/update/my */
-export async function updateMyUserUsingPost(
-  body: API.UserUpdateMyRequest, // 现在这就不会报错了
-  options?: { [key: string]: any },
-) {
-  return request<API.BaseResponseBoolean_>('/api/user/update/my', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  });
-}
-
 /** deleteUser POST /api/user/delete */
 export async function deleteUserUsingPost(
   body: API.DeleteRequest,
   options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseBoolean_>('/api/user/delete', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    data: body,
-    ...(options || {}),
-  })
-}
-
-/** exchangeVip POST /api/user/exchange/vip */
-export async function exchangeVipUsingPost(
-  body: API.VipExchangeRequest,
-  options?: { [key: string]: any }
-) {
-  return request<API.BaseResponseBoolean_>('/api/user/exchange/vip', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -156,6 +126,21 @@ export async function updateUserUsingPost(
   options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseBoolean_>('/api/user/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** updateMyUser POST /api/user/update/my */
+export async function updateMyUserUsingPost(
+  body: API.UserUpdateMyRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/update/my', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

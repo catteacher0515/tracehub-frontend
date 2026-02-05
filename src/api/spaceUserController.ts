@@ -1,3 +1,4 @@
+// @ts-ignore
 /* eslint-disable */
 import request from '@/request'
 
@@ -84,21 +85,17 @@ export async function listMyTeamSpaceUsingPost(options?: { [key: string]: any })
   })
 }
 
-/**
- * 主动退出团队空间
- * @param params
- */
+/** quitTeamSpace POST /api/spaceUser/quit */
 export async function quitTeamSpaceUsingPost(
-  params: API.DeleteRequest,
+  body: API.DeleteRequest,
   options?: { [key: string]: any }
 ) {
-  // 🌟🌟🌟 核心修复：加上 '/api' 前缀 🌟🌟🌟
   return request<API.BaseResponseBoolean_>('/api/spaceUser/quit', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    data: params,
+    data: body,
     ...(options || {}),
   })
 }

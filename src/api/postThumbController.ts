@@ -3,7 +3,7 @@
 import request from '@/request'
 
 /** doPostThumb POST /api/post_thumb/ */
-export async function doPostThumb(
+export async function doPostThumbUsingPost(
   body: API.PostThumbAddRequest,
   options?: { [key: string]: any }
 ) {
@@ -18,11 +18,11 @@ export async function doPostThumb(
 }
 
 /** listMyThumbPostByPage POST /api/post_thumb/my/list/page */
-export async function listMyThumbPostByPage(
+export async function listMyThumbPostByPageUsingPost(
   body: API.PostThumbQueryRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponsePagePostVO_>('/api/post_thumb/my/list/page', {
+  return request<API.BaseResponsePagePost_>('/api/post_thumb/my/list/page', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

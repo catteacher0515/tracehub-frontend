@@ -5,6 +5,9 @@
 import * as fileController from './fileController'
 import * as mainController from './mainController'
 import * as pictureController from './pictureController'
+import * as postController from './postController'
+import * as postFavourController from './postFavourController'
+import * as postThumbController from './postThumbController'
 import * as spaceController from './spaceController'
 import * as spaceAnalyzeController from './spaceAnalyzeController'
 import * as spaceUserController from './spaceUserController'
@@ -13,6 +16,9 @@ export default {
   fileController,
   mainController,
   pictureController,
+  postController,
+  postFavourController,
+  postThumbController,
   spaceController,
   spaceAnalyzeController,
   spaceUserController,
